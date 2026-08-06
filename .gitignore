@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 myvenv/
 .git/
+README_backup.md
