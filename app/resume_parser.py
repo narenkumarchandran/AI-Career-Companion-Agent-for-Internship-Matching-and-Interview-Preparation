@@ -99,7 +99,7 @@ LLM_FIELDS = """
 """
 
 
-def llm_extract(text: str, model: str = "llama-3.3-70b-versatile") -> dict:
+def llm_extract(text: str, model: str = settings.groq_model) -> dict:
     """Everything that needs *understanding*, not pattern matching, goes
     through the LLM. temperature=0 keeps it as deterministic as an LLM
     call can be, and the prompt explicitly forbids inventing data."""
@@ -146,6 +146,18 @@ Resume:
 def merge_results(regex_data: dict, llm_data: dict) -> dict:
     """Regex wins for deterministic fields (name/email/phone/links) since
     it can't hallucinate; everything else comes from the LLM pass."""
+    
+    # The LLM sometimes puts all skills in technical_skills and leaves skills empty.
+    # We combine them here to ensure 'skills' is populated for matching and UI.
+    raw_skills = llm_data.get("skills") or []
+    raw_tech = llm_data.get("technical_skills") or []
+    merged_skills = []
+    seen = set()
+    for s in (raw_skills + raw_tech):
+        if s not in seen:
+            seen.add(s)
+            merged_skills.append(s)
+
     return {
         "full_name": regex_data.get("name") or llm_data.get("full_name"),
         "email": regex_data.get("email"),
@@ -154,8 +166,8 @@ def merge_results(regex_data: dict, llm_data: dict) -> dict:
         "linkedin_url": regex_data.get("linkedin"),
         "github_url": regex_data.get("github"),
         "professional_summary": llm_data.get("professional_summary"),
-        "skills": llm_data.get("skills"),
-        "technical_skills": llm_data.get("technical_skills"),
+        "skills": merged_skills,
+        "technical_skills": raw_tech,
         "soft_skills": llm_data.get("soft_skills"),
         "education": llm_data.get("education"),
         "work_experience": llm_data.get("work_experience"),

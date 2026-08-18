@@ -123,3 +123,54 @@ class ResumeOut(BaseModel):
     languages: Any = None
     achievements: Any = None
     other_info: Any = None
+
+
+# ---------------------------------------------------------------------------
+# INTERNSHIP SCHEMAS — used by /internships/ routes
+# ---------------------------------------------------------------------------
+
+
+class InternshipPosting(BaseModel):
+    """One synthetic internship posting, as stored in
+    app/data/internships.json and indexed in FAISS (see
+    app/services/internship_index.py)."""
+
+    id: str
+    company: str
+    role_title: str
+    domain: str
+    location: str
+    mode: str
+    duration_weeks: int
+    stipend_inr_per_month: int
+    min_education: str
+    required_skills: list[str]
+    preferred_skills: list[str]
+    description: str
+
+
+class InternshipMatch(InternshipPosting):
+    """A posting returned by the matching endpoint, with the weighted
+    composite match score and a breakdown of what it's made of (see
+    app/services/internship_matcher.py) plus the skill-gap detail."""
+
+    # Composite 0-1 score: 0.5*skill + 0.2*semantic + 0.15*education + 0.15*location
+    match_score: float
+    match_percentage: float      # match_score × 100, for display
+    match_label: str             # "Perfect Match" / "Strong Match" / "Partial Match" / "Weak Match"
+    semantic_score: float        # FAISS-derived similarity
+    skill_score: float           # matched skills / required skills
+    education_score: float       # degree-level alignment
+    location_score: float        # city / remote match
+    matched_skills: list[str]    # resume skills present in required_skills
+    missing_skills: list[str]    # required_skills absent from resume
+
+
+class InternshipMatchResponse(BaseModel):
+    """Response of GET /internships/match/{resume_id}."""
+
+    resume_id: uuid.UUID
+    query_skills: str | None       # the skills text used to build the embedding query
+    results: list[InternshipMatch]
+    summary: str | None = None     # optional Groq-generated summary of the match set
+

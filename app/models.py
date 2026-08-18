@@ -55,16 +55,10 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    # --- Forgot / reset password support ---
-    # Holds the *most recently issued* reset token for this user. Reset
-    # requests are validated against this column (see crud.py) so a token
-    # can only be used once: reset-password clears it immediately after
-    # a successful reset, so a re-used or intercepted-old token stops
-    # working even though the JWT itself hasn't technically expired yet.
+ 
     reset_token: Mapped[str | None] = mapped_column(String(512), nullable=True)
 
-    # One User can have many RefreshTokens (one per login/device).
-    # cascade="all, delete-orphan" -> deleting a User also deletes their tokens.
+    
     refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )

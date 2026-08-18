@@ -16,8 +16,27 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 7
     reset_token_expire_minutes: int = 15  # how long a forgot-password link is valid for
 
-    # Required for the resume-parsing LLM pass (see app/resume_parser.py).
-    groq_api_key: str
+    # Used as the LLM fallback for resume parsing (see app/resume_parser.py)
+    # when regex extraction can't confidently pull a field out of a resume.
+    # None (unset in .env) simply disables the LLM pass — regex-only extraction
+    # still runs and results get stored.
+    groq_api_key: str | None = None
+    groq_model: str = "openai/gpt-oss-120b"
+
+    # ---------------------------------------------------------------------------
+    # RAG / Vector store settings (see app/services/internship_index.py)
+    # ---------------------------------------------------------------------------
+    # Local sentence-transformers model — no API key / cost, runs on CPU.
+    # Resumes and postings are embedded into the same vector space so
+    # "distance between vectors" == "how well this resume fits this posting".
+    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+
+    # Path (relative to project root) where internship postings are stored.
+    internship_data_path: str = "app/data/internships.json"
+
+    # Directory (relative to project root) where the FAISS index is persisted.
+    # Run `python build_index.py` once after changing internships.json.
+    internship_index_dir: str = "app/data/faiss_internship_index"
 
     class Config:
         env_file = ".env"   # tells pydantic-settings where to look

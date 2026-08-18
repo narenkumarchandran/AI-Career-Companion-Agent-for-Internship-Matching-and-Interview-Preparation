@@ -129,3 +129,23 @@ def download_resume(
         filename=resume.original_filename,
         media_type=resume.content_type,
     )
+
+
+@router.delete("/{resume_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_resume_endpoint(
+    resume_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Deletes the resume from the database and disk."""
+    resume = crud.get_resume_by_id(db, resume_id)
+    if resume is None or resume.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume not found")
+
+    # Delete physical file
+    try:
+        Path(resume.file_path).unlink(missing_ok=True)
+    except Exception:
+        pass
+        
+    crud.delete_resume(db, resume)

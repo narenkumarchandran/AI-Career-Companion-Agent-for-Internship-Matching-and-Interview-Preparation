@@ -143,3 +143,8 @@ def get_resumes_by_user(db: Session, user_id: uuid.UUID) -> list[models.Resume]:
 
 def get_resume_by_id(db: Session, resume_id: uuid.UUID) -> models.Resume | None:
     return db.query(models.Resume).filter(models.Resume.id == resume_id).first()
+
+
+def delete_resume(db: Session, resume: models.Resume) -> None:
+    db.delete(resume)
+    db.commit()
