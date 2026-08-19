@@ -6,6 +6,7 @@
 # ---------------------------------------------------------------------------
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 from app.routers import auth, resume, internships
@@ -23,6 +24,23 @@ app = FastAPI(
         "ranked internship recommendations based on your skills, education, and experience."
     ),
     version="2.0.0",
+)
+
+# ---------------------------------------------------------------------------
+# CORS — allow the React frontend (Vite dev server) to call the API.
+# In production replace "*" with your deployed frontend domain.
+# ---------------------------------------------------------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Mounts every route defined in app/routers/auth.py (they're all prefixed
