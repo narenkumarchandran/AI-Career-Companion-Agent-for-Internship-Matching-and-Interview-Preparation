@@ -53,8 +53,8 @@ export default function Login() {
               <Brain className="w-5 h-5 text-zinc-900" />
             </div>
             <div>
-              <CardTitle className="text-xl">InternAI</CardTitle>
-              <p className="text-xs text-muted-foreground">RAG-powered internship matching</p>
+              <CardTitle className="text-xl">AI Career Assistant</CardTitle>
+              <p className="text-xs text-muted-foreground">RAG-powered career matching</p>
             </div>
           </div>
           <div>
@@ -62,7 +62,7 @@ export default function Login() {
               {mode === "login" ? "Sign in to your account" : "Create your account"}
             </h2>
             <CardDescription className="mt-2">
-              {mode === "login" ? "Welcome back! Enter your credentials." : "Get started with AI-powered internship matching."}
+              {mode === "login" ? "Welcome back! Enter your credentials." : "Get started with AI-powered career matching."}
             </CardDescription>
           </div>
         </CardHeader>

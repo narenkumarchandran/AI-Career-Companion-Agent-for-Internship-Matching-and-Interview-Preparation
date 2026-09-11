@@ -42,7 +42,7 @@ const EMPTY_PROFILE: ProfileData = {
   education: [], work_experience: [], projects: [],
 };
 
-const STORAGE_KEY = "internai_profile";
+const STORAGE_KEY = "aicareer_profile";
 
 function loadSaved(): ProfileData | null {
   try {
@@ -506,7 +506,7 @@ export default function Profile() {
                   </button>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field label="Project Name">
-                      <input className={InputClass} value={p.name} onChange={ev => setProj(i, "name", ev.target.value)} placeholder="Internship Assistant" />
+                      <input className={InputClass} value={p.name} onChange={ev => setProj(i, "name", ev.target.value)} placeholder="Career Assistant" />
                     </Field>
                     <Field label="Technologies / Stack">
                       <input className={InputClass} value={p.technologies} onChange={ev => setProj(i, "technologies", ev.target.value)} placeholder="React, FastAPI, PostgreSQL" />

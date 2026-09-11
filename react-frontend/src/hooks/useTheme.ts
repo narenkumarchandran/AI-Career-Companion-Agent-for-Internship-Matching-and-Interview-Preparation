@@ -4,7 +4,7 @@ type Theme = "dark" | "light";
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem("internai_theme");
+    const saved = localStorage.getItem("aicareer_theme");
     return (saved as Theme) || "dark";
   });
 
@@ -12,7 +12,7 @@ export function useTheme() {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
-    localStorage.setItem("internai_theme", theme);
+    localStorage.setItem("aicareer_theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {

@@ -93,3 +93,31 @@
 .profile-avatar-hover:hover .profile-avatar-overlay {
   opacity: 1 !important;
 }
+
+/* ---- Interview Agent Page ---- */
+
+/* Make the agent page fill the entire AppShell content area */
+.agent-page {
+  height: 100%;
+}
+
+/* Bot message bubble — inherits card styles but with slight glow */
+.agent-bubble-bot {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+/* Markdown inside bot messages */
+.agent-markdown {
+  line-height: 1.65;
+}
+.agent-markdown > *:first-child {
+  margin-top: 0 !important;
+}
+.agent-markdown > *:last-child {
+  margin-bottom: 0 !important;
+}
+.agent-markdown h2 {
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.25rem;
+}

@@ -19,8 +19,8 @@ export default function Home() {
       icon: <FileText className="w-6 h-6 text-primary" />,
     },
     {
-      title: "Smart Internship Matching",
-      description: "Our RAG-powered engine matches your skills and experience to the best internships dynamically.",
+      title: "Smart Career Matching",
+      description: "Our RAG-powered engine matches your skills and experience to the best career opportunities dynamically.",
       icon: <Search className="w-6 h-6 text-primary" />,
     },
     {
@@ -43,7 +43,7 @@ export default function Home() {
           <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
             <Brain className="w-5 h-5" />
           </div>
-          <span className="text-xl font-bold tracking-tight">InternAI</span>
+          <span className="text-xl font-bold tracking-tight">AI Career Assistant</span>
         </div>
         <div className="flex items-center gap-4">
           {!isAuthenticated && <Button variant="ghost" onClick={() => navigate("/login")}>Sign In</Button>}
@@ -67,11 +67,11 @@ export default function Home() {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
-              Land your dream internship with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">AI precision.</span>
+              Land your dream career with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">AI precision.</span>
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-              InternAI analyzes your resume, scores it against ATS standards, and finds the perfect internship matches using advanced AI and semantic search.
+              AI Career Assistant analyzes your resume, scores it against ATS standards, and finds the perfect career matches using advanced AI and semantic search.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
@@ -129,7 +129,7 @@ export default function Home() {
               <Target className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Ready to get started?</h2>
-            <p className="text-xl text-muted-foreground">Join thousands of students who have optimized their resumes and found their perfect internship match.</p>
+            <p className="text-xl text-muted-foreground">Join thousands of students who have optimized their resumes and found their perfect career match.</p>
             <Button size="lg" className="h-14 px-10 text-base" onClick={handleStart}>
               {isAuthenticated ? "Go to Dashboard" : "Create your free account"}
             </Button>
@@ -138,7 +138,7 @@ export default function Home() {
       </main>
 
       <footer className="py-8 border-t border-border text-center text-sm text-muted-foreground bg-background">
-        © {new Date().getFullYear()} InternAI. Built for students, powered by AI.
+        © {new Date().getFullYear()} AI Career Assistant. Built for students, powered by AI.
       </footer>
     </div>
   );

@@ -11,6 +11,7 @@ import ResumeMatch from "./pages/ResumeMatch";
 import Jobs from "./pages/Jobs";
 import ATSScore from "./pages/ATSScore";
 import Profile from "./pages/Profile";
+import InterviewAgent from "./pages/InterviewAgent";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -37,6 +38,7 @@ function AppRoutes() {
         <Route path="jobs" element={<Jobs />} />
         <Route path="ats-score" element={<ATSScore />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="interview-agent" element={<InterviewAgent />} />
       </Route>
       {/* Backwards compatibility for existing links */}
       <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />

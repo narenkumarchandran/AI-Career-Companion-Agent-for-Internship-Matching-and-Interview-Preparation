@@ -1,0 +1,327 @@
+Assignment: Develop an AI-Powered Product Assistant Chatbot
+1. Objective
+Your task is to design and develop an AI-powered Product Assistant Chatbot that helps users understand and use a product.
+The chatbot should be able to answer questions related to the product by using product documentation as its knowledge source. The solution must use a Retrieval-Augmented Generation (RAG) architecture and should also support conversation memory.
+The goal of this assignment is to build an end-to-end chatbot application that can:
+Answer questions about the product.
+Explain product features and functionalities.
+Guide users on how to use the product.
+Explain the technologies used to develop the product.
+Provide information about the product architecture and workflow.
+Remember previous conversations within a user session.
+Store conversation history in a database.
+2. Product Documentation
+Before developing the chatbot, create a detailed Product Knowledge Document in either PDF or DOCX format.
+This document will act as the primary knowledge base for the RAG chatbot.
+The document should include the following sections.
+2.1 Product Overview
+Describe the product and its main purpose.
+Include:
+Product Name
+Product Description
+Problem the product solves
+Target users
+Main objectives of the product
+2.2 Product Features and Functionalities
+Describe all the important features of the product.
+For each feature, explain:
+Feature name
+Purpose
+How it works
+How users can use it
+Expected output or result
+Example:
+Feature: Document Upload
+Users can upload PDF or DOCX documents to the application. The system processes the uploaded document and extracts relevant information for further processing.
+2.3 How to Use the Product
+Create a step-by-step guide explaining how a user can interact with the product.
+For example:
+User logs into the application.
+User accesses the product dashboard.
+User selects the required functionality.
+User uploads or enters the required information.
+The system processes the request.
+The user receives the final result.
+This section should help the chatbot answer questions such as:
+How can I use this feature?
+How do I upload a document?
+How does this functionality work?
+What should I do first?
+2.4 Product Architecture
+Include the high-level architecture of the product.
+The architecture should explain the flow between different components, such as:
+User → Frontend → Backend/API → AI Model → Database → Response
+You should clearly explain the responsibility of each component.
+For example:
+Frontend: User interface for interacting with the product.
+Backend: Handles business logic and API requests.
+LLM/AI Model: Generates intelligent responses.
+Vector Database: Stores document embeddings for RAG retrieval.
+Database: Stores user and conversation information.
+A diagram or architecture flow should also be included in the document if possible.
+2.5 Technology Stack
+Mention all technologies used for product development.
+For example:
+Frontend
+React
+Streamlit
+HTML/CSS/JavaScript
+Backend
+Python
+FastAPI
+AI and LLM
+OpenAI / Azure OpenAI
+LangChain
+LangGraph
+Database
+MongoDB
+PostgreSQL
+Vector Database
+ChromaDB
+FAISS
+Azure AI Search
+The intern should explain why each technology was selected.
+3. RAG Implementation
+Develop a RAG-based chatbot using the Product Knowledge Document.
+The system should perform the following steps:
+Load the PDF/DOCX document.
+Extract the text from the document.
+Split the document into smaller chunks.
+Generate embeddings for each chunk.
+Store embeddings in a vector database.
+Convert the user's question into an embedding.
+Retrieve the most relevant document chunks.
+Provide the retrieved context to the LLM.
+Generate a response based on the retrieved information.
+RAG Flow
+User Query
+↓
+Generate Query Embedding
+↓
+Vector Database Search
+↓
+Retrieve Relevant Document Chunks
+↓
+Send Context + User Query to LLM
+↓
+Generate Final Response
+The chatbot should answer product-related questions primarily using the information available in the product documentation.
+4. Conversation Memory Implementation
+The chatbot should also implement conversation memory.
+The purpose of memory is to allow the chatbot to understand previous messages from the user during the conversation.
+For example:
+User:
+What technologies are used in this product?
+Chatbot:
+This product uses Python, FastAPI, LangChain, and MongoDB.
+User:
+Why did we use it?
+The chatbot should understand that "it" refers to the technologies discussed in the previous conversation.
+5. Conversation Storage
+All user conversations should be stored in a database.
+Each conversation should contain information such as:
+User ID
+Session ID
+User Query
+Assistant Response
+Timestamp
+Example conversation structure:
+{
+    "user_id": "user_123",
+    "session_id": "session_456",
+    "conversation": [
+        {
+            "role": "user",
+            "message": "What is the purpose of this product?",
+            "timestamp": "2026-08-28T10:30:00Z"
+        },
+        {
+            "role": "assistant",
+            "message": "This product helps users...",
+            "timestamp": "2026-08-28T10:30:05Z"
+        }
+    ]
+}
+Alternatively, conversations can be stored as individual records:
+{
+    "user_id": "user_123",
+    "session_id": "session_456",
+    "user_query": "What is the purpose of this product?",
+    "assistant_response": "This product helps users...",
+    "created_at": "2026-08-28T10:30:00Z"
+}
+6. Memory Flow
+The chatbot should follow this workflow:
+User Sends Query
+↓
+Retrieve Previous Conversation History Using User ID and Session ID
+↓
+Retrieve Relevant Product Information Using RAG
+↓
+Combine:
+System Instructions
+Conversation History
+Retrieved RAG Context
+Current User Query
+↓
+Send Combined Context to LLM
+↓
+Generate Response
+↓
+Return Response to User
+↓
+Store User Query and Assistant Response in Database
+7. User and Session Management
+The application must support multiple users and sessions.
+Each user should have a unique:
+user_id
+Each conversation session should have a unique:
+session_id
+Example:
+User A
+ ├── Session 1
+ │    ├── Conversation 1
+ │    ├── Conversation 2
+ │    └── Conversation 3
+ │
+ └── Session 2
+      ├── Conversation 1
+      └── Conversation 2
+The chatbot should only retrieve the conversation history related to the current:
+User ID
+Session ID
+This ensures that conversations from different users or sessions are not mixed.
+8. Expected System Architecture
+The final system architecture should look similar to the following:
+                 ┌──────────────┐
+                 │     User     │
+                 └──────┬───────┘
+                        │
+                        ▼
+                 ┌──────────────┐
+                 │   Frontend   │
+                 └──────┬───────┘
+                        │
+                        ▼
+                 ┌──────────────┐
+                 │   Backend    │
+                 │   FastAPI    │
+                 └──────┬───────┘
+                        │
+          ┌─────────────┴─────────────┐
+          ▼                           ▼
+ ┌─────────────────┐         ┌──────────────────┐
+ │ Conversation DB │         │   RAG Pipeline   │
+ │                 │         │                  │
+ │ User ID         │         │ Product Document │
+ │ Session ID      │         │       ↓          │
+ │ Conversation    │         │    Chunking      │
+ └────────┬────────┘         │       ↓          │
+          │                  │   Embeddings     │
+          ▼                  │       ↓          │
+ ┌─────────────────┐         │ Vector Database  │
+ │ Conversation    │         └────────┬─────────┘
+ │ Memory          │                  │
+ └────────┬────────┘                  │
+          └──────────────┬────────────┘
+                         ▼
+                  ┌──────────────┐
+                  │     LLM      │
+                  └──────┬───────┘
+                         ▼
+                  ┌──────────────┐
+                  │   Response   │
+                  └──────────────┘
+9. Functional Requirements
+Your chatbot must support the following functionalities:
+Product Knowledge
+Answer questions related to the product.
+Explain product features.
+Explain how to use the product.
+Explain the product architecture.
+Explain the technology stack.
+RAG
+Load PDF/DOCX documents.
+Perform document chunking.
+Generate embeddings.
+Store embeddings in a vector database.
+Retrieve relevant context.
+Generate answers based on retrieved context.
+Memory
+Retrieve previous conversation history.
+Use previous messages when generating responses.
+Maintain separate memory for different users and sessions.
+Database
+Store user conversations.
+Store User ID.
+Store Session ID.
+Store timestamps.
+Retrieve conversations based on User ID and Session ID.
+10. Recommended Technology Stack
+You may use the following technologies:
+Programming Language: Python
+Backend: FastAPI
+LLM Framework: LangChain or LangGraph
+LLM: OpenAI or Azure OpenAI
+Vector Database: ChromaDB, FAISS, or Azure AI Search
+Database: MongoDB or PostgreSQL
+Frontend: Streamlit or React
+Interns may choose alternative technologies, but they should clearly explain the reason for their selection.
+11. Expected Deliverables
+Each intern should submit the following:
+Product Knowledge Document
+PDF or DOCX format.
+Source Code
+Complete project source code.
+README File
+Instructions for running the project.
+Required dependencies.
+Environment variables.
+Database setup instructions.
+Architecture Diagram
+Complete system architecture.
+RAG Flow Diagram
+Explain the document-to-response pipeline.
+Database Schema
+Show how users, sessions, and conversations are stored.
+Demo
+Demonstrate the chatbot with multiple questions.
+Demonstrate RAG-based responses.
+Demonstrate conversation memory.
+Demonstrate multiple users and sessions.
+12. Evaluation Criteria
+The assignment will be evaluated based on:
+Product documentation quality.
+RAG implementation.
+Accuracy of chatbot responses.
+Conversation memory implementation.
+Database design.
+User and session management.
+Code quality and project structure.
+Error handling.
+Documentation and README quality.
+Overall system architecture.
+13. Bonus Tasks
+The following features are optional but will be considered as bonus:
+Streaming responses.
+Chat history UI.
+Multiple chat sessions.
+Source citations showing which document section was used.
+Conversation summarization for long chat histories.
+Authentication and user login.
+Feedback system (Like/Dislike responses).
+LangGraph-based chatbot workflow.
+Dockerization.
+Deployment of the application.
+Final Goal
+The final product should be an intelligent Product Assistant Chatbot capable of answering questions using product documentation through RAG while maintaining contextual conversation memory.
+The system should follow this complete flow:
+Product Document → RAG Pipeline → Relevant Context
+Database → Previous Conversation History
+Current User Query
+↓
+LLM
+↓
+Intelligent Context-Aware Response
+↓
+Store Conversation with User ID, Session ID, and Timestamp

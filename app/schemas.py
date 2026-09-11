@@ -174,3 +174,71 @@ class InternshipMatchResponse(BaseModel):
     results: list[InternshipMatch]
     summary: str | None = None     # optional Groq-generated summary of the match set
 
+
+# ---------------------------------------------------------------------------
+# CHATBOT SCHEMAS
+# ---------------------------------------------------------------------------
+
+class ChatMessageCreate(BaseModel):
+    """Payload to send a message to the chatbot."""
+    message: str
+
+class ChatMessageResponse(BaseModel):
+    """Response structure for a single chat message."""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: uuid.UUID
+    session_id: uuid.UUID
+    role: str
+    message: str
+    created_at: datetime
+
+class ChatSessionResponse(BaseModel):
+    """Response structure for a chat session, optionally including messages."""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: uuid.UUID
+    user_id: uuid.UUID
+    created_at: datetime
+    messages: list[ChatMessageResponse] = []
+
+
+# ---------------------------------------------------------------------------
+# INTERVIEW AGENT SCHEMAS
+# ---------------------------------------------------------------------------
+
+class AgentChatMessageCreate(BaseModel):
+    """Payload to send a message to the Interview Preparation Agent.
+    Optionally includes a resume_id so the agent can use the candidate's
+    parsed resume data as personalized context."""
+    message: str
+    resume_id: uuid.UUID | None = None
+
+
+class AgentChatSessionCreate(BaseModel):
+    """Optional body for creating an agent session pre-linked to a resume."""
+    resume_id: uuid.UUID | None = None
+
+
+# ---------------------------------------------------------------------------
+# DOCUMENT Q&A SCHEMAS
+# ---------------------------------------------------------------------------
+
+class DocumentUploadResponse(BaseModel):
+    """Response after successfully uploading and processing a document for Q&A."""
+    doc_session_id: str
+    filename: str
+    chunk_count: int
+    message: str
+
+
+class DocQAMessageCreate(BaseModel):
+    """Payload to ask a question about an uploaded document."""
+    message: str
+
+
+class DocQAMessageResponse(BaseModel):
+    """Response from the document Q&A endpoint."""
+    doc_session_id: str
+    question: str
+    answer: str

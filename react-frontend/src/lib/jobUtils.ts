@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // Applied jobs — persisted to localStorage
 // ---------------------------------------------------------------------------
-const APPLIED_KEY = "internai_applied_jobs";
+const APPLIED_KEY = "aicareer_applied_jobs";
 
 export function getAppliedJobs(): string[] {
   try { return JSON.parse(localStorage.getItem(APPLIED_KEY) ?? "[]"); }
@@ -39,7 +39,7 @@ interface ProfileData {
 }
 
 function loadProfile(): ProfileData {
-  try { return JSON.parse(localStorage.getItem("internai_profile") ?? "{}"); }
+  try { return JSON.parse(localStorage.getItem("aicareer_profile") ?? "{}"); }
   catch { return {}; }
 }
 

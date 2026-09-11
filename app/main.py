@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
-from app.routers import auth, resume, internships
+from app.routers import auth, resume, internships, chatbot
 
 # Creates any table defined in app/models.py (via Base) that doesn't already
 # exist in Postgres yet. Safe to run every startup — it does NOT touch or
@@ -48,6 +48,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(resume.router)
 app.include_router(internships.router)
+app.include_router(chatbot.router)
 
 
 @app.get("/")

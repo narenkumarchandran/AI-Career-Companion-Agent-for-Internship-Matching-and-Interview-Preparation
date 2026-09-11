@@ -1,4 +1,6 @@
-# 🚀 AI Internship Assistant
+# 🚀 AI Career Assistant
+
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 An AI-powered, full-stack internship platform that helps students go from uploading a resume to receiving semantically ranked internship recommendations — with skill-gap analysis, AI-generated summaries, and a rich Streamlit UI.
 
@@ -8,7 +10,7 @@ An AI-powered, full-stack internship platform that helps students go from upload
 
 ## What This Project Does
 
-The AI Internship Assistant is a **backend API + Streamlit frontend** that provides:
+The AI Career Assistant is a **backend API + Streamlit frontend** that provides:
 
 | Feature | Description |
 |---|---|
@@ -430,3 +432,33 @@ streamlit run frontend/streamlit_app.py
 | **JSONB for parsed fields** | Resume structure is open-ended. JSONB avoids schema churn as parsed fields evolve, while still being queryable in Postgres. |
 | **UUID primary keys** | Unguessable IDs prevent enumeration attacks on resume/user endpoints. |
 | **Refresh token DB storage** | JWTs can't be revoked client-side once issued. DB storage enables logout and rotation. |
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+```
+MIT License
+
+Copyright (c) 2026 Naren Kumar Chandran
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

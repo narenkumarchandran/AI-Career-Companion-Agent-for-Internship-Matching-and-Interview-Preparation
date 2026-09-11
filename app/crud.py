@@ -148,3 +148,31 @@ def get_resume_by_id(db: Session, resume_id: uuid.UUID) -> models.Resume | None:
 def delete_resume(db: Session, resume: models.Resume) -> None:
     db.delete(resume)
     db.commit()
+
+
+# ---------------------------------------------------------------------------
+# CHATBOT CRUD
+# ---------------------------------------------------------------------------
+
+def create_chat_session(db: Session, user_id: uuid.UUID) -> models.ChatSession:
+    session = models.ChatSession(user_id=user_id)
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+    return session
+
+def get_chat_sessions(db: Session, user_id: uuid.UUID) -> list[models.ChatSession]:
+    return db.query(models.ChatSession).filter(models.ChatSession.user_id == user_id).order_by(models.ChatSession.created_at.desc()).all()
+
+def get_chat_session(db: Session, session_id: uuid.UUID, user_id: uuid.UUID) -> models.ChatSession | None:
+    return db.query(models.ChatSession).filter(models.ChatSession.id == session_id, models.ChatSession.user_id == user_id).first()
+
+def create_chat_message(db: Session, session_id: uuid.UUID, role: str, message: str) -> models.ChatMessage:
+    msg = models.ChatMessage(session_id=session_id, role=role, message=message)
+    db.add(msg)
+    db.commit()
+    db.refresh(msg)
+    return msg
+
+def get_chat_messages(db: Session, session_id: uuid.UUID) -> list[models.ChatMessage]:
+    return db.query(models.ChatMessage).filter(models.ChatMessage.session_id == session_id).order_by(models.ChatMessage.created_at.asc()).all()

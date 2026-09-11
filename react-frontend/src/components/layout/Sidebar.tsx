@@ -3,7 +3,7 @@ import { NavLink, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import {
   LayoutDashboard, FileText, Briefcase, Search,
-  BarChart3, User, LogOut, Brain, Sun, Moon
+  BarChart3, User, LogOut, Brain, Sun, Moon, BrainCircuit
 } from "lucide-react";
 import { useTheme } from "../../hooks/useTheme";
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ const navItems = [
   { to: "/app/resume-match", label: "Find Matches", icon: Search },
   { to: "/app/jobs", label: "Browse Jobs", icon: Briefcase },
   { to: "/app/ats-score", label: "ATS Score", icon: BarChart3 },
+  { to: "/app/interview-agent", label: "Interview Agent", icon: BrainCircuit },
   { to: "/app/profile", label: "Profile", icon: User },
 ];
 
@@ -28,7 +29,7 @@ export default function Sidebar() {
   useEffect(() => {
     const loadPhoto = () => {
       try {
-        const raw = localStorage.getItem("internai_profile");
+        const raw = localStorage.getItem("aicareer_profile");
         if (raw) setProfilePhoto(JSON.parse(raw).photo || null);
       } catch {}
     };
@@ -54,7 +55,7 @@ export default function Sidebar() {
             <Brain className="w-5 h-5" />
           </div>
           <div className="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
-            <span className="text-lg font-bold tracking-tight leading-none">InternAI</span>
+            <span className="text-lg font-bold tracking-tight leading-none">AI Career Assistant</span>
             <span className="text-xs text-muted-foreground mt-1 font-medium">Powered by RAG</span>
           </div>
         </Link>

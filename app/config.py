@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     # None (unset in .env) simply disables the LLM pass — regex-only extraction
     # still runs and results get stored.
     groq_api_key: str | None = None
-    groq_model: str = "openai/gpt-oss-120b"
+    groq_model: str = "openai/gpt-oss-120b"  # 128K context window; confirmed available on this account
 
     # ---------------------------------------------------------------------------
     # RAG / Vector store settings (see app/services/internship_index.py)
