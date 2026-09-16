@@ -23,6 +23,20 @@ An end-to-end, AI-powered career platform for students: upload a resume, get sem
 
 ---
 
+## 🏃 Sprint Overview
+
+This project was developed across **5 sprints**, each delivering a distinct layer of the platform:
+
+| Sprint | Focus Area | Key Deliverables |
+|--------|-----------|------------------|
+| **Sprint 1** | Resume Parsing (Regex + LLM) | Hybrid extraction pipeline: deterministic regex for contact fields (email, phone, LinkedIn, GitHub) + Groq LLM for free-form sections (skills, education, experience, projects, certifications). Merged output stored as JSONB in PostgreSQL. |
+| **Sprint 2** | Backend Development | Full FastAPI backend: SQLAlchemy ORM, JWT auth (access + refresh tokens, bcrypt hashing, token rotation), PostgreSQL schema, all REST endpoints (`/auth`, `/resume`, `/internships`, `/chat`), and FAISS internship index build pipeline. |
+| **Sprint 3** | Frontend Creation | React 18 + TypeScript + Vite SPA with 9 pages (Home, Login, Dashboard, Resumes, Resume Match, Jobs, ATS Score, Interview Agent, Profile), TailwindCSS dark-mode design, AppShell sidebar, and auth state management via Context API. |
+| **Sprint 4** | Resume Matching + Chatbot Integration | FAISS semantic internship matching with multi-signal re-ranking (skill overlap 50%, semantic similarity 20%, education 15%, location 15%); floating InternAI chatbot widget powered by RAG over a product knowledge document with per-session PostgreSQL conversation memory. |
+| **Sprint 5** | Interview Preparation Agent | Resume-aware AI coach (`/chat/agent/*`): reads the candidate's parsed resume from the DB and generates personalised interview questions, model answers referencing their own projects, skill gap analysis, learning roadmaps, and time-bound preparation plans via LangChain + Groq. |
+
+---
+
 ## Quick Start
 
 ### Prerequisites

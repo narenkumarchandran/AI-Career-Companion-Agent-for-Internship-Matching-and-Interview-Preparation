@@ -6,23 +6,109 @@
 
 ## Table of Contents
 
-1. [Product Overview](#1-product-overview)
-2. [System Architecture](#2-system-architecture)
-3. [Features & Functionality](#3-features--functionality)
-4. [How It Works — Detailed Flows](#4-how-it-works--detailed-flows)
-5. [RAG Flow Diagram](#5-rag-flow-diagram)
-6. [Conversation Memory](#6-conversation-memory)
-7. [Database Schema](#7-database-schema)
-8. [API Reference](#8-api-reference)
-9. [Project Structure](#9-project-structure)
-10. [Tech Stack](#10-tech-stack)
-11. [Setup & Running](#11-setup--running)
-12. [Sample Outputs](#12-sample-outputs)
-13. [Key Design Decisions](#13-key-design-decisions)
+1. [Sprint Overview](#1-sprint-overview)
+2. [Product Overview](#2-product-overview)
+3. [System Architecture](#3-system-architecture)
+4. [Features & Functionality](#4-features--functionality)
+5. [How It Works — Detailed Flows](#5-how-it-works--detailed-flows)
+6. [RAG Flow Diagram](#6-rag-flow-diagram)
+7. [Conversation Memory](#7-conversation-memory)
+8. [Database Schema](#8-database-schema)
+9. [API Reference](#9-api-reference)
+10. [Project Structure](#10-project-structure)
+11. [Tech Stack](#11-tech-stack)
+12. [Setup & Running](#12-setup--running)
+13. [Sample Outputs](#13-sample-outputs)
+14. [Key Design Decisions](#14-key-design-decisions)
 
 ---
 
-## 1. Product Overview
+## 1. Sprint Overview
+
+This project was built iteratively across **5 sprints**, each targeting a vertical slice of the platform.
+
+### Sprint 1 — Regex + LLM Resume Parsing
+
+**Goal:** Build the core resume intelligence layer.
+
+| Task | Detail |
+|------|--------|
+| Text extraction | PyMuPDF (PDF) and python-docx (DOCX) extract raw text from uploaded resumes |
+| Regex pass | Deterministic patterns extract `email`, `phone`, `linkedin_url`, `github_url` with 100% consistency |
+| LLM pass (Groq) | `llama-3.3-70b-versatile` contextually extracts `skills`, `technical_skills`, `soft_skills`, `education`, `work_experience`, `projects`, `certifications`, `internships`, `languages`, `achievements`, `professional_summary` |
+| Merge strategy | Regex fields take priority for contact info; LLM fills everything else |
+| Storage | All parsed fields stored as JSONB columns in the `resumes` PostgreSQL table; `parsed_status` tracks `pending → parsed / failed` |
+| Outcome | `resume_parser.py` — a production-ready hybrid parser that handles wildly varied resume formats |
+
+---
+
+### Sprint 2 — Backend Development
+
+**Goal:** Build the complete FastAPI backend serving all platform features.
+
+| Task | Detail |
+|------|--------|
+| Project scaffold | FastAPI app with `app/` package: `main.py`, `config.py`, `database.py`, `models.py`, `schemas.py`, `security.py`, `crud.py` |
+| Database layer | SQLAlchemy 2.0 ORM; PostgreSQL tables: `users`, `refresh_tokens`, `resumes`, `chat_sessions`, `chat_messages`; auto-created on startup |
+| Auth system | JWT HS256 access token (30 min) + refresh token (7 days, DB-stored); bcrypt hashing; token rotation; logout revocation; password reset |
+| Resume endpoints | `POST /resume/upload` (validate, store, trigger parse), `GET /resume/` (list + parsed data), `GET /resume/{id}/download` |
+| Internship endpoints | `GET /internships/` (public catalog), `GET /internships/match/{resume_id}` (RAG match) |
+| Chat endpoints | Session management, InternAI chatbot messages, Interview Agent messages, Document Q&A upload + query |
+| FAISS index build | `build_index.py` embeds ~100+ internship postings with `all-MiniLM-L6-v2` and persists the FAISS index |
+| Outcome | A fully functional REST API at `http://127.0.0.1:8000` with auto-generated OpenAPI docs |
+
+---
+
+### Sprint 3 — Frontend Creation
+
+**Goal:** Build a polished, production-grade React SPA connected to the backend.
+
+| Task | Detail |
+|------|--------|
+| Project scaffold | React 18 + TypeScript + Vite; TailwindCSS for styling; React Router v6 for client-side routing |
+| Auth flow | `useAuth` Context hook; JWT stored in `localStorage`; protected routes redirect unauthenticated users |
+| Pages (9 total) | `Home`, `Login`, `Dashboard`, `Resumes`, `ResumeMatch`, `Jobs`, `ATSScore`, `InterviewAgent`, `Profile` |
+| AppShell | Collapsible sidebar with navigation links; floating InternAI chat widget rendered on every authenticated page |
+| API layer | Typed `fetch` wrappers in `src/api/` with automatic `Authorization: Bearer` header injection |
+| Dark-mode design | TailwindCSS `dark:` variants; consistent design tokens across all pages |
+| Outcome | Running SPA at `http://localhost:5173` with full end-to-end user flows |
+
+---
+
+### Sprint 4 — Resume Matching with Internships & Chatbot Integration
+
+**Goal:** Connect parsed resume data to semantic internship search and integrate the AI chatbot.
+
+| Task | Detail |
+|------|--------|
+| FAISS semantic search | Query embedding (384-dim `all-MiniLM-L6-v2`) searched against pre-built internship FAISS index; 4× candidate pool pulled for re-ranking |
+| Multi-signal re-ranking | Composite score: skill overlap (50%) + semantic similarity (20%) + education match (15%) + location/mode (15%) |
+| Match labels | 🟢 Perfect Match (≥85%), 🔵 Strong Match (≥65%), 🟡 Partial Match (≥40%), 🔴 Weak Match (<40%) |
+| LLM summary | Groq generates a 2–3 sentence narrative fit summary + 1–2 skill suggestions per result set |
+| InternAI chatbot | RAG over `product_knowledge.docx` (built with `build_chatbot_doc.py` + `build_chatbot_index.py`); top-3 chunks retrieved per query |
+| Conversation memory | Last 6 messages per session loaded from `chat_messages` table → injected as `MessagesPlaceholder` in LangChain chain |
+| Floating widget | Chatbot rendered in every authenticated page via `AppShell`; per-session history persisted in PostgreSQL |
+| Outcome | `internship_matcher.py`, `chatbot_service.py`, `chatbot_rag.py` — accurate matching and a context-aware conversational assistant |
+
+---
+
+### Sprint 5 — Interview Preparation Agent
+
+**Goal:** Build a resume-aware AI interview coach as a dedicated agent.
+
+| Task | Detail |
+|------|--------|
+| Resume context injection | Agent loads the candidate's fully parsed resume from the DB and formats it as structured text injected into the system prompt |
+| Interview Agent chain | LangChain `ChatPromptTemplate` with `SystemMessage` (InterviewGPT persona + resume context) + `MessagesPlaceholder` (last 8 messages) + `HumanMessage` (current query) |
+| Capabilities | Role & company recommendations; technical, behavioural, and situational questions; model answers referencing the candidate's own projects; skill gap analysis; time-bound preparation roadmaps; learning path and resource recommendations |
+| Separate session store | Agent sessions stored in `chat_sessions` (same table, different session type) to keep interview history isolated from the general chatbot |
+| Frontend page | Dedicated `InterviewAgent.tsx` page with a full-screen chat interface and session switcher |
+| Document Q&A bonus | `document_service.py` adds a per-upload FAISS store (UUID-keyed) allowing Q&A over any user-supplied PDF/DOCX |
+| Outcome | `interview_agent_service.py` — a deeply personalised interview preparation coach unavailable in generic AI tools |
+
+---
+
+## 2. Product Overview
 
 **Product Name:** AI Career Companion (InternAI)
 
@@ -43,7 +129,7 @@ Students spend hours manually scanning job boards, tailoring resumes, and guessi
 
 ---
 
-## 2. System Architecture
+## 3. System Architecture
 
 ```
 +-------------------------------------------------------------------+
@@ -101,7 +187,7 @@ Students spend hours manually scanning job boards, tailoring resumes, and guessi
 
 ---
 
-## 3. Features & Functionality
+## 4. Features & Functionality
 
 ### 3.1 Secure Authentication
 
@@ -175,7 +261,7 @@ Public endpoint (no auth required). Browse all postings; filter by domain, locat
 
 ---
 
-## 4. How It Works — Detailed Flows
+## 5. How It Works — Detailed Flows
 
 ### Authentication Flow
 ```
@@ -252,7 +338,7 @@ POST /chat/document/{doc_session_id}/message
 
 ---
 
-## 5. RAG Flow Diagram
+## 6. RAG Flow Diagram
 
 ```
 User Query
@@ -286,7 +372,7 @@ Store Query + Response in PostgreSQL (chat_messages)
 
 ---
 
-## 6. Conversation Memory
+## 7. Conversation Memory
 
 The chatbot and interview agent maintain session-scoped memory via PostgreSQL:
 
@@ -310,7 +396,7 @@ Conversations from different users or sessions are never mixed.
 
 ---
 
-## 7. Database Schema
+## 8. Database Schema
 
 ### Tables
 
@@ -382,7 +468,7 @@ All tables auto-created on startup via `Base.metadata.create_all()`.
 
 ---
 
-## 8. API Reference
+## 9. API Reference
 
 ### Authentication `POST /auth/register`
 Request:
@@ -435,7 +521,7 @@ Response: `{ "access_token": "...", "refresh_token": "...", "token_type": "beare
 
 ---
 
-## 9. Project Structure
+## 10. Project Structure
 
 ```
 milestone_assignment_2/
@@ -503,7 +589,7 @@ milestone_assignment_2/
 
 ---
 
-## 10. Tech Stack
+## 11. Tech Stack
 
 | Layer | Technology | Why chosen |
 |---|---|---|
@@ -522,7 +608,7 @@ milestone_assignment_2/
 
 ---
 
-## 11. Setup & Running
+## 12. Setup & Running
 
 ### Environment Variables (`.env`)
 
@@ -565,7 +651,7 @@ npm run dev
 
 ---
 
-## 12. Sample Outputs
+## 13. Sample Outputs
 
 ### Internship Match Response
 ```json
@@ -618,7 +704,7 @@ The chatbot resolves "it" correctly from conversation history stored in PostgreS
 
 ---
 
-## 13. Key Design Decisions
+## 14. Key Design Decisions
 
 | Decision | Rationale |
 |---|---|
